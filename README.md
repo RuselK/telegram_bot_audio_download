@@ -50,3 +50,6 @@ TOKEN=<your_telegram_token>
 ```
 python3 main.py
 ```
+
+## Included Libraries
+1. [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)
