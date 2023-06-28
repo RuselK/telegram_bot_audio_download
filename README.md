@@ -13,11 +13,6 @@ git clone git@github.com:RuselK/telegram_bot_audio_download.git
 python3 -m venv venv
 ```
 
-3. Create venv: 
-```
-python3 -m venv venv
-```
-
 4. Run venv:
 
 for linux:
