@@ -6,10 +6,10 @@ from io import BytesIO
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.error import TelegramError
-from telegram.ext import (
-    ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
-)
+from telegram.ext import (ApplicationBuilder, CommandHandler, ContextTypes,
+                          MessageHandler, filters)
 
+from decorators import log
 from exceptions import MissingEnvironmentVariable
 
 load_dotenv()
@@ -29,18 +29,18 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
+@log(logger)
 def check_token():
     """Check access to TOKEN."""
-    logger.debug('Function is started.')
     if TOKEN is None:
         logger.critical('Missing telegram TOKEN.')
         raise MissingEnvironmentVariable(
             'Missing telegram TOKEN.')
 
 
+@log(logger)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        logger.debug('Function is started.')
         chat_id = update.effective_chat.id
         await context.bot.send_message(
             chat_id=chat_id,
@@ -51,6 +51,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         raise TelegramError()
 
 
+@log(logger)
 async def download_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot = context.bot
     file = await bot.getFile(update.message.voice.file_id)
@@ -59,11 +60,11 @@ async def download_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return voice_bytes
 
 
+@log(logger)
 async def download_voice_message(
         update: Update, context: ContextTypes.DEFAULT_TYPE
 ):
     try:
-        logger.debug('Function is started.')
         chat_id = update.effective_chat.id
         voice = await download_file(update, context)
 
@@ -73,7 +74,7 @@ async def download_voice_message(
             filename=f'{update.message.voice.file_id}.mp3'
         )
 
-        logger.info(f'Message sent to chat_id {chat_id}.')
+        logger.info(f'Message sent to following chat_id: {chat_id}.')
     except TelegramError:
         raise TelegramError()
 
@@ -81,6 +82,7 @@ async def download_voice_message(
 def main():
     check_token()
     application = ApplicationBuilder().token(TOKEN).build()
+    logger.info('Bot is initialized.')
     try:
 
         application.add_handler(CommandHandler('start', start))
